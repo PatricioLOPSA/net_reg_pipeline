@@ -146,7 +146,12 @@ prep_data <- function(train_data, test_data, drug_data, target_drug){
     y_test <- filt_test %>%
      pull(all_of("drug_response"))
 
-    x_test <- x_test[,colnames(x_train)]
+    x_test <- x_test[,colnames(x_train), drop = FALSE]
+
+    #Remove features with zero variance in training and test data
+    nzv_cols <- apply(x_train, 2, var) > 0
+    x_train <- x_train[, nzv_cols, drop = FALSE]
+    x_test <- x_test[, nzv_cols, drop = FALSE]
     #output named list
     list(
         x_train = x_train,
